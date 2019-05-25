@@ -62,4 +62,61 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldFindOneUserWithGivenNameIgnoreCase() {
+
+        repository.save(user);
+
+        List<User> findedResulats = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JAn", "Any",
+                "Any@any.com");
+
+        Assert.assertThat(findedResulats.contains(user), Matchers.equalTo(true));
+    }
+
+    @Test
+    public void shouldFindOneUserWithGivenEmailIgnoreCase() {
+        repository.save(user);
+
+        List<User> findedResulats = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Any", "Any",
+                "JOHN@doMain.COm");
+
+        Assert.assertThat(findedResulats.contains(user), Matchers.equalTo(true));
+    }
+
+    @Test
+    public void shouldFindTwoUsersWithGivenNameIgnoreCase() {
+        repository.save(user);
+
+        User user2 = new User();
+        user2.setFirstName("JAN");
+        user2.setEmail("JAN@gmail.com");
+        user2.setAccountStatus(AccountStatus.NEW);
+        repository.save(user2);
+
+        List<User> findedResulats = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("jAn", "Any",
+                "Any@any.com");
+
+        Assert.assertThat(findedResulats.contains(user), Matchers.equalTo(true));
+        Assert.assertThat(findedResulats.contains(user2), Matchers.equalTo(true));
+    }
+
+    @Test
+    public void shouldNotFindAnyUserWithGivenWrongName() {
+        repository.save(user);
+
+        List<User> findedResulats = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Any", "Any",
+                "Any@any.com");
+
+        Assert.assertThat(findedResulats.contains(user), Matchers.equalTo(false));
+    }
+
+    @Test
+    public void shouldNotFindAnyUserWithGivenWrongEmail() {
+        repository.save(user);
+
+        List<User> findedResulats = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Any", "Any",
+                "Any@any.com");
+
+        Assert.assertThat(findedResulats.contains(user), Matchers.equalTo(false));
+    }
 }
