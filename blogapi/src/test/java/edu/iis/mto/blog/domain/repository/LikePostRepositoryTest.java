@@ -32,6 +32,9 @@ public class LikePostRepositoryTest {
     @Autowired
     private LikePostRepository likePostRepo;
 
+    @Autowired
+    BlogPostRepository blogPostRepository;
+
     private User user;
     private BlogPost post;
     private LikePost like;
@@ -47,7 +50,7 @@ public class LikePostRepositoryTest {
         post = new BlogPost();
         post.setEntry("My first post");
         post.setUser(user);
-        entityManager.persist(post);
+        blogPostRepository.save(post);
 
         like = new LikePost();
         like.setPost(post);
