@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.iis.mto.blog.domain.errors.DomainError;
+import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.User;
 import edu.iis.mto.blog.domain.repository.BlogPostRepository;
@@ -41,6 +42,7 @@ public class BlogDataFinder extends DomainService implements DataFinder {
                 searchString, searchString);
 
         return users.stream()
+                    .filter(user -> user.getAccountStatus() != AccountStatus.REMOVED)
                     .map(mapper::mapToDto)
                     .collect(Collectors.toList());
     }
@@ -56,6 +58,9 @@ public class BlogDataFinder extends DomainService implements DataFinder {
     public List<PostData> getUserPosts(Long userId) {
         User user = userRepository.findById(userId)
                                   .orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+        if (user.getAccountStatus() == AccountStatus.REMOVED) {
+            throw new DomainError(DomainError.USER_STATUS_REMOVED);
+        }
         List<BlogPost> posts = blogPostRepository.findByUser(user);
         return posts.stream()
                     .map(mapper::mapToDto)
