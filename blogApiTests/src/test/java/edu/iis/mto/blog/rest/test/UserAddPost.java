@@ -36,7 +36,7 @@ public class UserAddPost {
                    .expect()
                    .log()
                    .all()
-                   .statusCode(HttpStatus.SC_CREATED)
+                   .statusCode(HttpStatus.SC_BAD_REQUEST)
                    .when()
                    .post(USER_API, 2);
     }
