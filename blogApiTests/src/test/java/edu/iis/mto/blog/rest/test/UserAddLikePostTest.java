@@ -8,7 +8,7 @@ import org.junit.Test;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
-public class UserAddLikePost {
+public class UserAddLikePostTest {
 
     private static final String USER_API = "/blog/user/{userid}/like/{postId}";
 

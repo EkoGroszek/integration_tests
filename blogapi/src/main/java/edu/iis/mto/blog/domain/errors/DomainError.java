@@ -8,9 +8,9 @@ public class DomainError extends RuntimeException {
     public static final String POST_NOT_FOUND = "unknown post";
     public static final String SELF_LIKE = "cannot like own post";
     public static final String NOT_CONFIRMED_USER = "unconfirmed user";
+    public static final String REMOVED_USER = "user was removed";
 
     public DomainError(String msg) {
         super(msg);
     }
-
 }

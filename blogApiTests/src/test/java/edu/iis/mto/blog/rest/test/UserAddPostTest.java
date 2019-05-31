@@ -7,7 +7,7 @@ import org.junit.Test;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
-public class UserAddPost {
+public class UserAddPostTest {
 
     private static final String USER_API = "/blog/user/{id}/post";
 
