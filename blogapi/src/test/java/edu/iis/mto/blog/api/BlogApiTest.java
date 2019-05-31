@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -20,7 +22,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.iis.mto.blog.api.request.UserRequest;
-import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.dto.Id;
 import edu.iis.mto.blog.services.BlogService;
 import edu.iis.mto.blog.services.DataFinder;
@@ -75,7 +76,7 @@ public class BlogApiTest {
     @Test
     public void shouldAnswerWithStatusNotFoundWhenAskForNotExistingUser() throws Exception {
         Mockito.when(finder.getUserData(-1L))
-               .thenThrow(new DomainError(DomainError.USER_NOT_FOUND));
+               .thenThrow(new EntityNotFoundException());
 
         mvc.perform(get("/blog/user/{id}", -1))
            .andExpect(status().isNotFound());
