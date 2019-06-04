@@ -1,11 +1,15 @@
 package edu.iis.mto.blog.domain.repository;
 
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.List;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Jakistam");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -59,6 +64,66 @@ public class UserRepositoryTest {
         User persistedUser = repository.save(user);
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
+    }
+
+    @Test
+    public void shouldFindUserUsingFirstnameWithIgnoreCaseUsingLowerCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("jan", "", "");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldFindUserUsingFirstnameWithIgnoreCaseUsingUpperCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JAN", "", "");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldFindUserUsingFirstnameWithIgnoreCaseUsingRandomCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JaN", "", "");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldFindUserUsingLastNameWithIgnoreCaseUsingLowerCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "jakistam", "");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+    @Test
+    public void shouldFindUserUsingLastNameWithIgnoreCaseUsingUpperCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "JAKISTAM", "");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldFindUserUsingLastNameWithIgnoreCaseUsingRandomCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "JaKiStAm", "");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+    @Test
+    public void shouldFindUserUsingEmailWithIgnoreCaseUsingUpperCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "", "JOHN@DOMAIN.COM");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldFindUserUsingEmailWithIgnoreCaseUsingLowerCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "", "john@domain.com");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+    @Test
+    public void shouldFindUserUsingEmailWithIgnoreCaseUsingRandomCase(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "", "JoHn@DoMaIn.CoM");
+        assertThat(users.contains(user), is(equalTo(true)));
     }
 
 }
