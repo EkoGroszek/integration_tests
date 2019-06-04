@@ -125,5 +125,23 @@ public class UserRepositoryTest {
         List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "", "JoHn@DoMaIn.CoM");
         assertThat(users.contains(user), is(equalTo(true)));
     }
+    @Test
+    public void shouldNotFindUserUsingBadEmailWithIgnoreCaseUsingRandomCas(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", " ", "bademail@com");
+        assertThat(users.contains(user), is(equalTo(false)));
+    }
+    @Test
+    public void shouldNotFindUserUsingBadLastNameWithIgnoreCaseUsingRandomCas(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(" ", "BasLastName", " ");
+        assertThat(users.contains(user), is(equalTo(false)));
+    }
+    @Test
+    public void shouldNotFindUserUsingBadFirstNameWithIgnoreCaseUsingRandomCas(){
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("BadFirstName", " ", " ");
+        assertThat(users.contains(user), is(equalTo(false)));
+    }
 
 }
