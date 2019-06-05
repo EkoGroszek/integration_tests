@@ -2,6 +2,7 @@ package edu.iis.mto.blog.domain.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -9,12 +10,17 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 @Entity
+@Builder
+@AllArgsConstructor
 public class BlogPost extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
@@ -22,8 +28,7 @@ public class BlogPost extends BaseEntity {
     @Lob
     private String entry;
 
-    @OneToMany
-    @JoinColumn(name = "postId")
+    @OneToMany(mappedBy = "post")
     private List<LikePost> likes;
 
     public BlogPost() {}
