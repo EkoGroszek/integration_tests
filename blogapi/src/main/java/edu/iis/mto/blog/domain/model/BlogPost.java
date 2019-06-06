@@ -20,7 +20,7 @@ public class BlogPost extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 

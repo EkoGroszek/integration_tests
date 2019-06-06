@@ -3,7 +3,8 @@ package edu.iis.mto.blog.services;
 import edu.iis.mto.blog.api.request.PostRequest;
 import edu.iis.mto.blog.api.request.UserRequest;
 
-public interface BlogService {
+public interface BlogService
+    {
 
     Long createUser(UserRequest userRequest);
 
@@ -11,4 +12,8 @@ public interface BlogService {
 
     boolean addLikeToPost(Long userId, Long postId);
 
-}
+    public void deleteUser(Long id);
+
+    public void deleteUser4Ever(Long id);
+
+    }

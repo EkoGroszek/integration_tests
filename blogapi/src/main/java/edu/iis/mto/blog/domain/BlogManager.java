@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import edu.iis.mto.blog.api.request.PostRequest;
@@ -21,55 +22,83 @@ import edu.iis.mto.blog.services.BlogService;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
-public class BlogManager extends DomainService implements BlogService {
+public class BlogManager extends DomainService implements BlogService
+    {
 
     protected BlogManager(UserRepository userRepository, BlogPostRepository blogPostRepository, LikePostRepository likePostRepository,
-            BlogDataMapper mapper) {
+                          BlogDataMapper mapper)
+        {
         super(userRepository, blogPostRepository, likePostRepository, mapper);
-    }
+        }
 
     @Override
-    public Long createUser(UserRequest userRequest) {
+    public void deleteUser(Long id)
+        {
+        User user = userRepository.findById(id).orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+        user.setAccountStatus(AccountStatus.REMOVED);
+        userRepository.save(user);
+        }
+
+    @Override
+    public void deleteUser4Ever(Long id)
+        {
+        User user = userRepository.findById(id).orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+        List<BlogPost> blogPosts=blogPostRepository.findByUser(user);
+        blogPostRepository.deleteAll(blogPosts);
+        userRepository.delete(user);
+        }
+
+    @Override
+    public Long createUser(UserRequest userRequest)
+        {
         User user = mapper.mapToEntity(userRequest);
         user.setAccountStatus(AccountStatus.NEW);
         userRepository.save(user);
         return user.getId();
-    }
+        }
 
     @Override
-    public Long createPost(Long userId, PostRequest postRequest) {
-        User user = userRepository.findById(userId)
-                                  .orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+    public Long createPost(Long userId, PostRequest postRequest)
+        {
+        User user = userRepository.findById(userId).orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+        if(user.getAccountStatus()!=AccountStatus.CONFIRMED)
+            {
+            throw new DomainError(DomainError.PERMISSION_ERROR);
+            }
         BlogPost post = mapper.mapToEntity(postRequest);
         post.setUser(user);
         blogPostRepository.save(post);
         return post.getId();
-    }
+        }
 
     @Override
-    public boolean addLikeToPost(Long userId, Long postId) {
+    public boolean addLikeToPost(Long userId, Long postId)
+        {
         User user = userRepository.findById(userId)
-                                  .orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+                .orElseThrow(domainError(DomainError.USER_NOT_FOUND));
         BlogPost post = blogPostRepository.findById(postId)
-                                          .orElseThrow(domainError(DomainError.POST_NOT_FOUND));
+                .orElseThrow(domainError(DomainError.POST_NOT_FOUND));
         if (post.getUser()
                 .getId()
-                .equals(userId)) {
+                .equals(userId))
+            {
             throw new DomainError(DomainError.SELF_LIKE);
-        }
+            }
 
-        if (user.getAccountStatus()!=AccountStatus.CONFIRMED) {
+        if (user.getAccountStatus() != AccountStatus.CONFIRMED)
+            {
             throw new DomainError(DomainError.PERMISSION_ERROR);
-        }
+            }
         Optional<LikePost> existingLikeForPost = likePostRepository.findByUserAndPost(user, post);
-        if (existingLikeForPost.isPresent()) {
+        if (existingLikeForPost.isPresent())
+            {
             return false;
-        }
+            }
         LikePost likePost = new LikePost();
         likePost.setUser(user);
         likePost.setPost(post);
         likePostRepository.save(likePost);
         return true;
-    }
+        }
 
-}
+    }
