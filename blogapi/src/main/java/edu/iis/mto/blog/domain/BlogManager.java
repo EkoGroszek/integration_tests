@@ -1,10 +1,10 @@
 package edu.iis.mto.blog.domain;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import edu.iis.mto.blog.api.request.PostRequest;
 import edu.iis.mto.blog.api.request.UserRequest;
@@ -56,6 +56,10 @@ public class BlogManager extends DomainService implements BlogService {
                 .getId()
                 .equals(userId)) {
             throw new DomainError(DomainError.SELF_LIKE);
+        }
+
+        if (user.getAccountStatus()!=AccountStatus.CONFIRMED) {
+            throw new DomainError(DomainError.PERMISSION_ERROR);
         }
         Optional<LikePost> existingLikeForPost = likePostRepository.findByUserAndPost(user, post);
         if (existingLikeForPost.isPresent()) {
