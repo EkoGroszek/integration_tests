@@ -90,6 +90,7 @@ public class BlogApi
 
     @ApiOperation(value = "find users based on email or first name or last name")
     @GetMapping(path = "/user/find")
+    @ResponseStatus(HttpStatus.OK)
     public List<UserData> findUser(@RequestParam String searchString)
         {
         LOGGER.debug("find users endpoint called for searchString '{}'", searchString);
@@ -117,14 +118,16 @@ public class BlogApi
 
     @ApiOperation(value = "get user posts based on user id")
     @GetMapping(path = "/user/{id}/post")
+    @ResponseStatus(HttpStatus.OK)
     public List<PostData> getUserPosts(@PathVariable("id") Long userId)
         {
         LOGGER.debug("get user posts endpoint called for user id '{}'", userId);
         return finder.getUserPosts(userId);
         }
 
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "get single post based on post id")
-    @GetMapping(path = "/post")
+    @GetMapping(path = "/post/{id}")
     public PostData getPosts(@PathVariable("id") Long postId)
         {
         LOGGER.debug("get post by id '{}'", postId);
