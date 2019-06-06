@@ -74,20 +74,23 @@ public class BlogManagerTest
     @Test(expected = DomainError.class)
     public void givenUserWithNewAccountStatus_whenUserLikeToPost_thenThrowDomainError()
         {
+        //given
         prepareNewUser(AccountStatus.NEW);
         preparePost();
-
+        //when
         blogService.addLikeToPost(1L, 1L);
+        //then throw
         }
 
     @Test
-    public void givenUserWithConfirmedAccountStatus_whenUserLikeToPost_thenCorrectAddPost()
+    public void givenUserWithConfirmedAccountStatus_whenUserLikeToPost_thenCorrectAddedPost()
         {
+        //given
         prepareNewUser(AccountStatus.CONFIRMED);
         preparePost();
-
+        //when
         Boolean isAdded = blogService.addLikeToPost(1L, 1L);
-
+        //then
         Assert.assertTrue(isAdded);
         }
 

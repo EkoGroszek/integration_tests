@@ -69,7 +69,7 @@ public class UserRepositoryTest
         }
 
     @Test
-    public void givenTwoDifferentUser_whenWeShearUserContainingNameJanekOrEmailKowalski_thenWeGetOneUser()
+    public void givenTwoDifferentUser_whenWeShearUserContainingNameJanekOrLastNameKowalskiOrEmailKowalski_thenWeGetOneUser()
         {
         //given
         repository.save(getUser("Jan", "john@domain.com"));
@@ -83,7 +83,7 @@ public class UserRepositoryTest
         }
 
     @Test
-    public void givenTwoDifferentUser_whenWeShearUserContainingNameBartekOrEmailBartnicki_thenWeGetZeroUser()
+    public void givenTwoDifferentUser_whenWeShearUserContainingNameBartekOrLastNameBartnickiOrEmailBartnicki_thenWeGetZeroUser()
         {
         //given
         repository.save(getUser("Jan", "john@domain.com"));
