@@ -16,4 +16,6 @@ public interface BlogService
 
     public void deleteUser4Ever(Long id);
 
+    public void confirmUser(Long id);
+
     }

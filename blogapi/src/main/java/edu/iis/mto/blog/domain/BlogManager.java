@@ -32,14 +32,6 @@ public class BlogManager extends DomainService implements BlogService
         }
 
     @Override
-    public void deleteUser(Long id)
-        {
-        User user = userRepository.findById(id).orElseThrow(domainError(DomainError.USER_NOT_FOUND));
-        user.setAccountStatus(AccountStatus.REMOVED);
-        userRepository.save(user);
-        }
-
-    @Override
     public void deleteUser4Ever(Long id)
         {
         User user = userRepository.findById(id).orElseThrow(domainError(DomainError.USER_NOT_FOUND));
@@ -49,11 +41,30 @@ public class BlogManager extends DomainService implements BlogService
         }
 
     @Override
+    public void deleteUser(Long id)
+        {
+        User user = userRepository.findById(id).orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+        changeUserAccountStatus(user, AccountStatus.REMOVED);
+        }
+
+    private void changeUserAccountStatus(User user, AccountStatus removed)
+        {
+        user.setAccountStatus(removed);
+        userRepository.save(user);
+        }
+
+    @Override
+    public void confirmUser(Long id)
+        {
+        User user = userRepository.findById(id).orElseThrow(domainError(DomainError.USER_NOT_FOUND));
+        changeUserAccountStatus(user, AccountStatus.CONFIRMED);
+        }
+
+    @Override
     public Long createUser(UserRequest userRequest)
         {
         User user = mapper.mapToEntity(userRequest);
-        user.setAccountStatus(AccountStatus.NEW);
-        userRepository.save(user);
+        changeUserAccountStatus(user, AccountStatus.NEW);
         return user.getId();
         }
 

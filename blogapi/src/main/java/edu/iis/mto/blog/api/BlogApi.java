@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -78,6 +79,15 @@ public class BlogApi
         blogService.deleteUser4Ever(userId);
         }
 
+    @ApiOperation(value = "confirm user based on user id")
+    @GetMapping(path = "/admin/user/confirm/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void confirmUser(@PathVariable("id") Long userId)
+        {
+        LOGGER.debug("get admin endpoint called for user id '{}'", userId);
+        blogService.confirmUser(userId);
+        }
+
     @ApiOperation(value = "find users based on email or first name or last name")
     @GetMapping(path = "/user/find")
     public List<UserData> findUser(@RequestParam String searchString)
@@ -92,17 +102,17 @@ public class BlogApi
     public Id createPost(@PathVariable("id") Long userId, @RequestBody PostRequest postRequest)
         {
         LOGGER.debug("create post endpoint called for data '{}'", postRequest);
-
         Long postId = blogService.createPost(userId, postRequest);
         return id(postId);
         }
 
     @ApiOperation(value = "Add like to blog post")
     @PostMapping(path = "user/{userId}/like/{postId}")
-    public boolean addLikeToPost(@PathVariable("userId") Long userId, @PathVariable("postId") Long postId)
+    @ResponseStatus(HttpStatus.OK)
+    public String addLikeToPost(@PathVariable("userId") Long userId, @PathVariable("postId") Long postId)
         {
         LOGGER.debug("add like to post endpoint called for userId '{}' and postId '{}'", userId, postId);
-        return blogService.addLikeToPost(userId, postId);
+        return String.valueOf(blogService.addLikeToPost(userId, postId));
         }
 
     @ApiOperation(value = "get user posts based on user id")
