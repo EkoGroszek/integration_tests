@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,16 +43,37 @@ public class BlogApiTest {
         user.setEmail("john@domain.com");
         user.setFirstName("John");
         user.setLastName("Steward");
-        Mockito.when(blogService.createUser(user)).thenReturn(newUserId);
+        Mockito.when(blogService.createUser(user))
+               .thenReturn(newUserId);
         String content = writeJson(user);
 
         mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isCreated())
-                .andExpect(content().string(writeJson(new Id(newUserId))));
+                                      .accept(MediaType.APPLICATION_JSON_UTF8)
+                                      .content(content))
+           .andExpect(status().isCreated())
+           .andExpect(content().string(writeJson(new Id(newUserId))));
     }
 
     private String writeJson(Object obj) throws JsonProcessingException {
-        return new ObjectMapper().writer().writeValueAsString(obj);
+        return new ObjectMapper().writer()
+                                 .writeValueAsString(obj);
     }
 
+    @Test
+    public void isAnsweredWithExceptionWithWrongData() throws Exception {
+        UserRequest userRequest = new UserRequest();
+        userRequest.setEmail("john@domain.com");
+        userRequest.setFirstName("John");
+        userRequest.setLastName("Steward");
+
+        Mockito.when(blogService.createUser(userRequest))
+               .thenThrow(new DataIntegrityViolationException("this user already exist"));
+
+        String content = writeJson(userRequest);
+
+        mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
+                                      .accept(MediaType.APPLICATION_JSON_UTF8)
+                                      .content(content))
+           .andExpect(status().isConflict());
+    }
 }

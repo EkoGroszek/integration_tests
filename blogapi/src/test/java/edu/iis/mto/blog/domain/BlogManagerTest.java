@@ -1,5 +1,7 @@
 package edu.iis.mto.blog.domain;
 
+import static org.mockito.Mockito.never;
+
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
