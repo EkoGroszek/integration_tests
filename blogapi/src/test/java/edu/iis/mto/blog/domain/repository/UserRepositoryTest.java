@@ -1,5 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
 
+import static org.hamcrest.CoreMatchers.is;
+
 import java.util.List;
 
 import org.hamcrest.Matchers;
@@ -52,7 +54,9 @@ public class UserRepositoryTest {
         List<User> users = repository.findAll();
 
         Assert.assertThat(users, Matchers.hasSize(1));
-        Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
+        Assert.assertThat(users.get(0)
+                               .getEmail(),
+                Matchers.equalTo(persistedUser.getEmail()));
     }
 
     @Ignore
@@ -64,4 +68,43 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void isFindUserWithEmailIgnoreCase() {
+        repository.save(user);
+
+        List<User> findUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Any", "Any",
+                "john@DOMAIN.COM");
+
+        Assert.assertThat(findUsers.contains(user), is(true));
+    }
+
+    @Test
+    public void isFindUserWithNameIgnoreCase() {
+        repository.save(user);
+
+        List<User> findUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("jAN", "Any",
+                "Any@any.com");
+
+        Assert.assertThat(findUsers.contains(user), is(true));
+    }
+
+    @Test
+    public void isNotFindUserWithWrongName() {
+        repository.save(user);
+
+        List<User> findUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Any", "Any",
+                "Any@any.com");
+
+        Assert.assertThat(findUsers.contains(user), is(false));
+    }
+
+    @Test
+    public void isNotFindUserWithWrongEmail() {
+        repository.save(user);
+
+        List<User> findUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Any", "Any",
+                "any@any.com");
+
+        Assert.assertThat(findUsers.contains(user), is(false));
+    }
 }
