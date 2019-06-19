@@ -1,11 +1,8 @@
 package edu.iis.mto.blog.domain.repository;
 
-import java.util.List;
-
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +10,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.User;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserRepositoryTest {
+public class UserRepositoryTest
+    {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -29,39 +29,87 @@ public class UserRepositoryTest {
     private User user;
 
     @Before
-    public void setUp() {
+    public void setUp()
+        {
         user = new User();
         user.setFirstName("Jan");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
-    }
+        }
 
-    @Ignore
+
     @Test
-    public void shouldFindNoUsersIfRepositoryIsEmpty() {
+    public void shouldFindNoUsersIfRepositoryIsEmpty()
+        {
 
         List<User> users = repository.findAll();
 
         Assert.assertThat(users, Matchers.hasSize(0));
-    }
+        }
 
-    @Ignore
+
     @Test
-    public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
+    public void shouldFindOneUsersIfRepositoryContainsOneUserEntity()
+        {
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
         Assert.assertThat(users, Matchers.hasSize(1));
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
-    }
+        }
 
-    @Ignore
+
     @Test
-    public void shouldStoreANewUser() {
+    public void shouldStoreANewUser()
+        {
 
         User persistedUser = repository.save(user);
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
-    }
+        }
 
-}
+    @Test
+    public void givenTwoDifferentUser_whenWeShearUserContainingNameJanekOrLastNameKowalskiOrEmailKowalski_thenWeGetOneUser()
+        {
+        //given
+        repository.save(getUser("Jan", "john@domain.com"));
+        repository.save(getUser("janek", "Kowalski", "kowalski@o2.pl"));
+        //when
+        List<User> users =
+                repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Janek", "Kowalski", "kowalski");
+
+        //then
+        Assert.assertThat(users, Matchers.hasSize(1));
+        }
+
+    @Test
+    public void givenTwoDifferentUser_whenWeShearUserContainingNameBartekOrLastNameBartnickiOrEmailBartnicki_thenWeGetZeroUser()
+        {
+        //given
+        repository.save(getUser("Jan", "john@domain.com"));
+        repository.save(getUser("janek", "Kowalski", "kowalski@o2.pl"));
+        //when
+        List<User> users =
+                repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Bartek", "Bartnicki", "Bartnicki");
+
+        //then
+        Assert.assertThat(users, Matchers.hasSize(0));
+        }
+
+    private User getUser(String name, String lastName, String email)
+        {
+        User user = getUser(name, email);
+        user.setLastName(lastName);
+        return user;
+        }
+
+    private User getUser(String name, String email)
+        {
+        User user = new User();
+        user.setFirstName(name);
+        user.setEmail(email);
+        user.setAccountStatus(AccountStatus.NEW);
+        return user;
+        }
+
+    }
