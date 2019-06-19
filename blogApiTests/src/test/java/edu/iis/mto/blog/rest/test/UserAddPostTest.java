@@ -7,13 +7,13 @@ import org.junit.Test;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
-public class CreateUserTest extends FunctionalTests {
+public class UserAddPostTest {
 
-    private static final String USER_API = "/blog/user";
+    private static final String USER_API = "/blog/user/{id}/post";
 
     @Test
-    public void postFormWithMalformedRequestDataReturnsBadRequest() {
-        JSONObject jsonObj = new JSONObject().put("email", "tracy@domain.com");
+    public void shouldAllowConfirmedUserAddPost() {
+        JSONObject jsonObj = new JSONObject().put("entry", "Confirmed user post");
         RestAssured.given()
                    .accept(ContentType.JSON)
                    .header("Content-Type", "application/json;charset=UTF-8")
@@ -23,12 +23,12 @@ public class CreateUserTest extends FunctionalTests {
                    .all()
                    .statusCode(HttpStatus.SC_CREATED)
                    .when()
-                   .post(USER_API);
+                   .post(USER_API, 1);
     }
 
     @Test
-    public void postFormWithConflictWhenOccurDataIntegrityViolationException() {
-        JSONObject jsonObj = new JSONObject().put("email", "john@domain.com");
+    public void shouldNotAllowUnconfirmedUserAddPost() {
+        JSONObject jsonObj = new JSONObject().put("entry", "Confirmed user post");
         RestAssured.given()
                    .accept(ContentType.JSON)
                    .header("Content-Type", "application/json;charset=UTF-8")
@@ -36,8 +36,8 @@ public class CreateUserTest extends FunctionalTests {
                    .expect()
                    .log()
                    .all()
-                   .statusCode(HttpStatus.SC_CONFLICT)
+                   .statusCode(HttpStatus.SC_BAD_REQUEST)
                    .when()
-                   .post(USER_API);
+                   .post(USER_API, 2);
     }
 }
