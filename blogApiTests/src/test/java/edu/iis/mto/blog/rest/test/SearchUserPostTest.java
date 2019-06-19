@@ -1,44 +1,43 @@
 package edu.iis.mto.blog.rest.test;
 
+import static org.hamcrest.Matchers.equalTo;
+
 import org.apache.http.HttpStatus;
-import org.json.JSONObject;
 import org.junit.Test;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
-public class CreateUserTest extends FunctionalTests {
+public class SearchUserPostTest extends FunctionalTests {
 
-    private static final String USER_API = "/blog/user";
+    private static final String GET_API_START = "/blog/user/";
+    private static final String GET_API_END = "/post";
 
     @Test
-    public void postFormWithMalformedRequestDataReturnsBadRequest() {
-        JSONObject jsonObj = new JSONObject().put("email", "tracy@domain.com");
+    public void searchOfPostsOfUserWithMultiplePostShouldReturnProperAmount() {
         RestAssured.given()
                    .accept(ContentType.JSON)
                    .header("Content-Type", "application/json;charset=UTF-8")
-                   .body(jsonObj.toString())
                    .expect()
                    .log()
                    .all()
-                   .statusCode(HttpStatus.SC_CREATED)
+                   .statusCode(HttpStatus.SC_OK)
+                   .and()
+                   .body("size()", equalTo(4))
                    .when()
-                   .post(USER_API);
+                   .get(GET_API_START + "1" + GET_API_END);
     }
 
     @Test
-    public void postFormForCreatingNewUserWithNotUniqueMailReturnsConflict() {
-
-        JSONObject jsonObj = new JSONObject().put("email", "john@domain.com");
+    public void searchOfPostOfRemovedUserShouldNotBeFound() {
         RestAssured.given()
                    .accept(ContentType.JSON)
                    .header("Content-Type", "application/json;charset=UTF-8")
-                   .body(jsonObj.toString())
                    .expect()
                    .log()
                    .all()
-                   .statusCode(HttpStatus.SC_CONFLICT)
+                   .statusCode(HttpStatus.SC_BAD_REQUEST)
                    .when()
-                   .post(USER_API);
+                   .post(GET_API_START + "3" + GET_API_END);
     }
 }
