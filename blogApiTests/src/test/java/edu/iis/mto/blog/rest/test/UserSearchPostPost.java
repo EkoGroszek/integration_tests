@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.hasItem;
 
-public class UserSearchPostPost {
+public class UserSearchPostPost extends FunctionalTests {
 
     @Test
     public void testForCheckCountPostsForValidUsersTest() {
