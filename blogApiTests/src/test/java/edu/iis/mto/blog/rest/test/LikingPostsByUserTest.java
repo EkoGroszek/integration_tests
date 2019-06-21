@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 
-public class LikingPostsByUser extends FunctionalTests {
+public class LikingPostsByUserTest extends FunctionalTests {
 
     @Test
     public void testFotLikingOwnPost() {
