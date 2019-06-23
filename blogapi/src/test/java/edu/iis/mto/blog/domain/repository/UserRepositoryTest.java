@@ -15,6 +15,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.User;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserRepositoryTest {
@@ -31,6 +35,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -40,7 +45,7 @@ public class UserRepositoryTest {
 
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(0));
+        assertThat(users, Matchers.hasSize(0));
     }
 
     @Test
@@ -48,8 +53,8 @@ public class UserRepositoryTest {
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(1));
-        Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
+        assertThat(users, Matchers.hasSize(1));
+        assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
     @Test
@@ -57,7 +62,21 @@ public class UserRepositoryTest {
 
         User persistedUser = repository.save(user);
 
-        Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
+        assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldFindUserWithGivenFullFirstNameIgnoringCase() {
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("jan", "other", "other");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldFindUserWithGivenFullLastNameIgnoringCase() {
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("other", "kowalski",
+                "other");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
 }
