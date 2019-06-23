@@ -79,4 +79,19 @@ public class UserRepositoryTest {
                 "other");
         assertThat(users.contains(user), is(equalTo(true)));
     }
+
+    @Test
+    public void shouldFindUserWithGivenPartOfFirstNameIgnoringCase() {
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("ja", "other", "other");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldFindUserWithGivenPartOfLastNameIgnoringCase() {
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("other", "alski",
+                "other");
+        assertThat(users.contains(user), is(equalTo(true)));
+    }
 }
