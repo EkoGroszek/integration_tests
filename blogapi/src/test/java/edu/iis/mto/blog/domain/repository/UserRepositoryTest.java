@@ -110,4 +110,20 @@ public class UserRepositoryTest {
                 "mail@mail.com");
         assertThat(users.contains(user), is(equalTo(false)));
     }
+
+    @Test
+    public void shouldNotFindUserWithGivenWrongFirstName() {
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("firstname", "other",
+                "other");
+        assertThat(users.contains(user), is(equalTo(false)));
+    }
+
+    @Test
+    public void shouldNotFindUserWithGivenWrongLastName() {
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("other", "lastname",
+                "other");
+        assertThat(users.contains(user), is(equalTo(false)));
+    }
 }
