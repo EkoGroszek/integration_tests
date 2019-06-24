@@ -34,7 +34,12 @@ public class ErrorHandling {
     @ExceptionHandler(EntityNotFoundException.class)
     public void entityNotFound(EntityNotFoundException exc, HttpServletResponse response) throws IOException {
         LOGGER.error(exc.getMessage());
-        response.sendError(HttpStatus.NOT_FOUND.value(), exc.getMessage());
+        if (exc.getMessage()
+                .equals(DomainError.USER_NOT_CONFIRMED)) {
+            response.sendError(HttpStatus.FORBIDDEN.value(), exc.getMessage());
+        } else {
+            response.sendError(HttpStatus.NOT_FOUND.value(), exc.getMessage());
+        }
     }
 
 }
