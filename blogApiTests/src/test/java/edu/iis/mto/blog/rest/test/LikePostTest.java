@@ -56,4 +56,19 @@ public class LikePostTest extends FunctionalTests {
                 .then()
                 .body("likesCount", hasItem(1));
     }
+    
+    @Test
+    public void LikeBlogPostByOwnerUserReturns403Code() {
+        String userId = "4";
+        String postId = "1";
+        RestAssured.given()
+                .accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .expect()
+                .log()
+                .all()
+                .statusCode(HttpStatus.SC_FORBIDDEN)
+                .when()
+                .post(LIKE_POST_API_START + userId + "/like/" + postId);
+    }
 }
