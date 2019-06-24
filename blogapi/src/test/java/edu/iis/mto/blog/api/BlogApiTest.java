@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +52,7 @@ public class BlogApiTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isCreated())
                 .andExpect(content().string(writeJson(new Id(newUserId))));
     }
-    
+
     @Test
     public void getNotExistingBlogUserShouldReturnCode404() throws Exception {
         Mockito.when(finder.getUserData(0L))
@@ -59,6 +60,20 @@ public class BlogApiTest {
         mvc.perform(get("/blog/user/{id}", 0))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void postBlogUserShouldResponseWith409CodeIfDataIntegrityViolationExceptionIsThrown() throws Exception {
+        UserRequest user = new UserRequest();
+        user.setEmail("john@domain.com");
+        user.setFirstName("John");
+        user.setLastName("Steward");
+        Mockito.when(blogService.createUser(user)).thenThrow(new DataIntegrityViolationException("data integrity exception"));
+        String content = writeJson(user);
+
+        mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8)
+                .content(content)).andExpect(status().isConflict());
+    }
+
 
     private String writeJson(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writer().writeValueAsString(obj);
