@@ -22,4 +22,20 @@ public class CreatePostTest extends FunctionalTests {
                 .when()
                 .post("/blog/user/1/post");
     }
+
+    @Test
+    public void shouldReturn403WhenPostBlogPostByNewUser() {
+        JSONObject jsonObject = new JSONObject().put("entry", "stub blog post");
+        RestAssured.given()
+                .accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObject.toString())
+                .expect()
+                .log()
+                .all()
+                .statusCode(HttpStatus.SC_FORBIDDEN)
+                .when()
+                .post("/blog/user/2/post");
+    }
+
 }
