@@ -28,7 +28,7 @@ public class ErrorHandling {
     @ExceptionHandler(DomainError.class)
     public void domainError(DomainError exc, HttpServletResponse response) throws IOException {
         LOGGER.error(exc.getMessage());
-        response.sendError(HttpStatus.BAD_REQUEST.value(), exc.getMessage());
+        response.sendError(HttpStatus.NOT_FOUND.value(), exc.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
