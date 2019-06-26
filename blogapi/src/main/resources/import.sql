@@ -4,6 +4,8 @@ insert into user (account_status, email, first_name) values ('NEW', 'brian@domai
 insert into user (account_status, email, first_name) values ('NEW', 'pgitner@gmail.com', 'Brian')
 insert into user (account_status, email, first_name) values ('REMOVED', 'adam@test.pl', 'Adam')
 insert into user (account_status, email, first_name) values ('CONFIRMED', 'test@test.pl', 'Jan')
+insert into user (account_status, email, first_name, last_name) values ('REMOVED', 'adam@test.pl', 'Adam', 'Testowy')
+
 insert into blog_post values (null, 'stub post', 1)
 insert into blog_post values (null, 'second stub post', 1)
 insert into blog_post values (null, 'third stub post from removed user', 4)
