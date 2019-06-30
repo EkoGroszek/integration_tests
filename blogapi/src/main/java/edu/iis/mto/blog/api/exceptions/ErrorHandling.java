@@ -28,13 +28,23 @@ public class ErrorHandling {
     @ExceptionHandler(DomainError.class)
     public void domainError(DomainError exc, HttpServletResponse response) throws IOException {
         LOGGER.error(exc.getMessage());
-        response.sendError(HttpStatus.BAD_REQUEST.value(), exc.getMessage());
+        response.sendError(HttpStatus.NOT_FOUND.value(), exc.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public void entityNotFound(EntityNotFoundException exc, HttpServletResponse response) throws IOException {
         LOGGER.error(exc.getMessage());
-        response.sendError(HttpStatus.NOT_FOUND.value(), exc.getMessage());
+        if (exc.getMessage()
+                .equals(DomainError.USER_NOT_CONFIRMED)
+                || exc.getMessage()
+                .equals(DomainError.SELF_LIKE)) {
+            response.sendError(HttpStatus.FORBIDDEN.value(), exc.getMessage());
+        } else if (exc.getMessage()
+                .equals(DomainError.USER_STATUS_REMOVED)) {
+            response.sendError(HttpStatus.BAD_REQUEST.value(), exc.getMessage());
+        } else {
+            response.sendError(HttpStatus.NOT_FOUND.value(), exc.getMessage());
+        }
     }
 
 }
