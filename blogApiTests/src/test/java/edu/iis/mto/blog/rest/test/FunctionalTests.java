@@ -1,8 +1,13 @@
 package edu.iis.mto.blog.rest.test;
 
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
+import org.json.JSONObject;
 import org.junit.BeforeClass;
 
 import io.restassured.RestAssured;
+import org.junit.Test;
 
 public class FunctionalTests {
 
@@ -27,5 +32,21 @@ public class FunctionalTests {
         }
         RestAssured.baseURI = baseHost;
     }
+
+    @Test
+    public void testForAddUser_EmailMustBeUnique() {
+        JSONObject email1 = new JSONObject().put("email", "john@domain.com");
+        RestAssured.given()
+                .accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .body(email1.toString())
+                .expect()
+                .log()
+                .all()
+                .statusCode(HttpStatus.SC_CONFLICT)
+                .when()
+                .post("/blog/user");
+    }
+
 
 }
