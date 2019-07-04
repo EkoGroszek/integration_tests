@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,6 +56,21 @@ public class BlogApiTest {
         Mockito.when(finder.getUserData(0L)).thenThrow(new DomainError(DomainError.USER_NOT_FOUND));
         mvc.perform(get("/blog/user/{id}", 0)).andExpect(status().isNotFound());
     }
+
+    @Test
+    public void shouldReturn409IfDataIntegrityViolationWhenExceptionIsThrown() throws Exception {
+        UserRequest userRequest = new UserRequest();
+        userRequest.setFirstName("Wiktor");
+        userRequest.setLastName("Jachimczak");
+        userRequest.setEmail("209330@edu.p.lodz.pl");
+
+        Mockito.when(blogService.createUser(userRequest)).thenThrow(new DataIntegrityViolationException("thrown exception"));
+        String content = writeJson(userRequest);
+
+        mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8).content(content))
+           .andExpect(status().isConflict());
+    }
+
 
     private String writeJson(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writer().writeValueAsString(obj);
