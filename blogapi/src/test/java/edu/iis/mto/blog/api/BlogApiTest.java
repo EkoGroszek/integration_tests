@@ -53,8 +53,8 @@ public class BlogApiTest {
 
     @Test
     public void shouldReturn404IfUserNotFoundWhenTryToGetUserThatNotExist() throws Exception {
-        Mockito.when(finder.getUserData(0L)).thenThrow(new DomainError(DomainError.USER_NOT_FOUND));
-        mvc.perform(get("/blog/user/{id}", 0)).andExpect(status().isNotFound());
+        Mockito.when(finder.getUserData(-1L)).thenThrow(new DomainError(DomainError.USER_NOT_FOUND));
+        mvc.perform(get("/blog/user/{id}", -1)).andExpect(status().isNotFound());
     }
 
     @Test
