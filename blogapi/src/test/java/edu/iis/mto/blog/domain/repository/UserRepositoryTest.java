@@ -82,6 +82,7 @@ public class UserRepositoryTest {
         Assert.assertThat(users.get(0).getEmail(), equalTo(persistedUser.getEmail()));
     }
 
+
     @Test
     public void shouldStoreANewUser() {
 
