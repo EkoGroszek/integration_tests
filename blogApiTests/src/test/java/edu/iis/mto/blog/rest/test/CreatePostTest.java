@@ -10,7 +10,7 @@ public class CreatePostTest  extends FunctionalTests {
 
     @Test
     public void shouldReturn201WhenPostBlogPostByConfirmedUser() {
-        JSONObject jsonObject = new JSONObject().put("someEntry", "blog content");
+        JSONObject jsonObject = new JSONObject().put("entry", "blog content");
         RestAssured.given()
                    .accept(ContentType.JSON)
                    .header("Content-Type", "application/json;charset=UTF-8")
@@ -22,6 +22,7 @@ public class CreatePostTest  extends FunctionalTests {
                    .when()
                    .post("/blog/user/1/post");
     }
+
 
 
 }
