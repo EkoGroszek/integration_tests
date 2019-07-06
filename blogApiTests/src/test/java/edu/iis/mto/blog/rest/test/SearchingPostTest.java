@@ -31,8 +31,7 @@ public class SearchingPostTest {
                    .statusCode(HttpStatus.SC_OK)
                    .and()
                    .body("size()", is(3))
-                   .when()
-                   .get("/blog/user/" + 1 + "/post");
+                   .when()                   .get("/blog/user/" + 1 + "/post");
     }
 
 }
